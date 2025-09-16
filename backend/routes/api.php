@@ -10,6 +10,8 @@ Route::prefix('/v1')->group(function () {
         Route::apiResource('/auth', AuthController::class);
         Route::apiResource('/user', UserController::class);
 
+        Route::post('/user/profile-pic', [UserController::class, 'changeProfilePic']);
+
         Route::put('/auth', [AuthController::class, 'update']);
         Route::put('/user', [UserController::class, 'update']);
 
