@@ -11,6 +11,7 @@ Route::prefix('/v1')->group(function () {
         Route::apiResource('/user', UserController::class);
 
         Route::put('/auth', [AuthController::class, 'update']);
+        Route::put('/user', [UserController::class, 'update']);
 
         Route::delete('/auth', [AuthController::class, 'destroy']);
     });

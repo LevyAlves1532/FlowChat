@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Mail\WelcomeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -42,9 +43,18 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request)
     {
-        //
+        $body = $request->only('fullName', 'email');
+
+        if ($request->has('fullName')) {
+            $body['name'] = $body['fullName'];
+            unset($body['fullName']);
+        }
+
+        Auth::user()->update($body);
+
+        return Auth::user();
     }
 
     /**
