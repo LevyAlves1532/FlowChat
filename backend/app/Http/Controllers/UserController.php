@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\StoreUserRequest;
+use App\Mail\WelcomeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -16,26 +18,17 @@ class UserController extends Controller
     {
         $body = $request->only('fullName', 'email', 'password');
 
-        User::create([
+        $user = User::create([
             'name' => $body['fullName'],
             'email' => $body['email'],
             'password' => $body['password'],
         ]);
 
-        $token = Auth::attempt([
-            'email' => $body['email'],
-            'password' => $body['password'],
-        ]);
-
-        if (!$token) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        Mail::to($user)->send(new WelcomeMail($user));
 
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60
-        ]);
+            'success' => 'Usuário criado com sucesso! Confirme sua conta!',
+        ], 201);
     }
 
     /**
@@ -60,5 +53,20 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    /**
+     * Confirm user account
+     */
+    public function confirmAccount(User $user)
+    {
+        if ($user->email_verified_at) {
+            return redirect(env('FRONT_APP_URL') ?? '/');
+        }
+
+        $user->email_verified_at = now();
+        $user->save();
+
+        return redirect(env('FRONT_APP_URL') ?? '/');
     }
 }
