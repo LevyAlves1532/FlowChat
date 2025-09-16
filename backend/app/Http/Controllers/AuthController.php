@@ -24,7 +24,15 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Credenciais inválidas'], 401);
+        }
+
+        $user = Auth::user();
+
+        if (!$user->hasVerifiedEmail()) {
+            return response()->json([
+                'error' => 'É necessário confirmar o e-mail antes de acessar.'
+            ], 403);
         }
 
         return $this->respondWithToken($token);
