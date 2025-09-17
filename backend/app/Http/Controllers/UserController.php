@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\ChangePasswordUserRequest;
 use App\Http\Requests\User\ChangeProfilePicUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
@@ -102,5 +103,24 @@ class UserController extends Controller
         ]);
 
         return $user;
+    }
+
+    public function changePassword(ChangePasswordUserRequest $request)
+    {
+        $user = Auth::user();
+
+        if (!password_verify($request->currentPassword, $user->password)) {
+            return response()->json([
+                'error' => 'Senha atual incorreta.',
+            ], 422);
+        }
+
+        $user->update([
+            'password' => $request->newPassword,
+        ]);
+
+        return response()->json([
+            'success' => 'Senha alterada com sucesso!',
+        ]);
     }
 }
