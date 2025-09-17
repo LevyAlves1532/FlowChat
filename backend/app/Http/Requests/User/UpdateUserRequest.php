@@ -3,15 +3,16 @@
 namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -23,8 +24,7 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'fullName' => 'required|min:3|max:25',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|max:16'
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
         ];
     }
 
@@ -38,13 +38,10 @@ class StoreUserRequest extends FormRequest
         return [
             'fullName.required' => 'O campo nome deve ser preenchido!',
             'email.required' => 'O campo e-mail deve ser preenchido!',
-            'password.required' => 'O campo senha deve ser preenchido!',
             'email.email' => 'O campo e-mail é inválido!',
             'fullName.min' => 'O campo nome deve conter no mínimo 3 caracteres!',
-            'password.min' => 'O campo senha deve conter no mínimo 8 caracteres!',
             'email.unique' => 'Este e-mail já está cadastrado!',
             'fullName.max' => 'O campo nome deve conter no máximo 25 caracteres!',
-            'password.max' => 'O campo senha deve conter no máximo 16 caracteres!',
         ];
     }
 }
