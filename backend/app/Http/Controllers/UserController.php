@@ -105,6 +105,9 @@ class UserController extends Controller
         return $user;
     }
 
+    /**
+     * Change user password
+     */
     public function changePassword(ChangePasswordUserRequest $request)
     {
         $user = Auth::user();
