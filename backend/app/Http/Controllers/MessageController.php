@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Message\StoreMessageRequest;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,15 +24,36 @@ class MessageController extends Controller
                     ->where('receiver_id', Auth::id());
             })
             ->orderBy('created_at', 'asc')
-            ->get();
+            ->get()
+            ->map(function (Message $message) {
+                $message['is_you'] = $message->sender_id === Auth::id();
+                return $message;
+            });
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(User $user, Request $request)
+    public function store(User $user, StoreMessageRequest $request)
     {
-        //
+        $body = $request->only('text');
+
+        $pathImage = null;
+
+        if ($request->has('image') && $request->file('image')) {
+            $pathImage = $request->file('image')->store('chats/' . Auth::id() . '/' . $user->id, [
+                'disk' => 'public',
+            ]);
+        }
+
+        $message = Message::create([
+            'sender_id' => Auth::id(),
+            'receiver_id' => $user->id,
+            ...$body,
+            'image' => $pathImage,
+        ]);
+
+        return response()->json($message, 201);
     }
 
     /**
@@ -63,6 +85,15 @@ class MessageController extends Controller
      */
     public function getChatPartners()
     {
-        //
+        $userId = Auth::id();
+
+        $partnerIds = Message::where('sender_id', $userId)
+            ->pluck('receiver_id')
+            ->merge(
+                Message::where('receiver_id', $userId)->pluck('sender_id')
+            )
+            ->unique();
+
+        return User::whereIn('id', $partnerIds)->get();
     }
 }
