@@ -20,7 +20,15 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::all();
+        return User::where('id', '!=', Auth::id())
+            ->get()
+            ->map(function ($user) {
+                if ($user->profile_pic) {
+                    $user['profile_pic'] = asset('storage/' . $user->profile_pic);
+                }
+
+                return $user;
+            });
     }
 
     /**

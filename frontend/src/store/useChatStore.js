@@ -39,7 +39,7 @@ export const useChatStore = create((set, get) => ({
 
         try {
             const res = await axiosInstance.get("/message/partners");
-            set({ allContacts: res.data });
+            set({ chats: res.data });
         } catch (error) {
             toast.toast(error?.response?.data?.message || 'Erro ao meus chats');
             console.log('Chats error:', error);
