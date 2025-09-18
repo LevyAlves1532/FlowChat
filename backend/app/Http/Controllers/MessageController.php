@@ -94,6 +94,11 @@ class MessageController extends Controller
             )
             ->unique();
 
-        return User::whereIn('id', $partnerIds)->get();
+        return User::whereIn('id', $partnerIds)
+            ->get()
+            ->map(function (User $user) {
+                $user['profile_pic'] = $user->profile_pic ? asset('storage/' . $user->profile_pic) : null;
+                return $user;
+            });
     }
 }
