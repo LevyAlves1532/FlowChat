@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router';
+import { Link, redirect, useNavigate } from 'react-router';
 import { LoaderIcon, LockIcon, MailIcon, MessageCircleIcon, UserIcon } from 'lucide-react';
 
 import { useAuthStore } from '../store/useAuthStore';
@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import BorderAnimatedContainer from '../components/border-animated-container';
 
 function SignUpPage() {
+  const navigate = useNavigate();
   const { signup, isSigningUp } = useAuthStore();
 
   const [ formData, setForm ] = useState({
@@ -15,10 +16,11 @@ function SignUpPage() {
     password: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    signup(formData);
+    await signup(formData);
+    navigate('/login');
   }
 
   return (
