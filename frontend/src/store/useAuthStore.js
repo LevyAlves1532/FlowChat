@@ -29,6 +29,7 @@ export const useAuthStore = create((set, get) => ({
 
       toast.success("Conta criada com sucesso! Valide sua conta pelo email.");
     } catch (error) {
+      console.log('Signup error: ', error);
       toast.error(error?.response?.data?.message || "Erro ao criar conta.");
     } finally {
       set({ isSigningUp: false });
@@ -46,9 +47,21 @@ export const useAuthStore = create((set, get) => ({
 
       toast.success("Login feito com sucesso.");
     } catch (error) {
+      console.log('Login error:', error);
       toast.error(error?.response?.data?.message || "Erro ao fazer login.");
     } finally {
       set({ isLoggingIn: false });
+    }
+  },
+
+  logout: async () => {
+    try {
+      await axiosInstance.delete("/auth");
+      set({ authUser: null });
+      toast.success("Deslogado com sucesso!");
+    } catch (error) {
+      toast.toast(error?.response?.data?.message || 'Erro ao deslogar');
+      console.log('Logout error:', error);
     }
   },
 }));
