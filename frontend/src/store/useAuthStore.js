@@ -64,4 +64,15 @@ export const useAuthStore = create((set, get) => ({
       console.log('Logout error:', error);
     }
   },
+
+  updateProfilePic: async (data) => {
+    try {
+      const res = await axiosInstance.post("/user/profile-pic", data);
+      set({ authUser: res.data });
+      toast.success("Foto de perfil atualizada com sucesso!");
+    } catch (error) {
+      console.log("Error updating profile pic:", error);
+      toast.error(error?.response?.data?.message || "Erro ao atualizar foto de perfil.");
+    }
+  },
 }));

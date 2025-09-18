@@ -13,7 +13,11 @@ class AuthController extends Controller
      */
     public function index()
     {
-        return response()->json(Auth::user());
+        $user = Auth::user();
+
+        $user['profile_pic'] = asset('storage/' . $user['profile_pic']);
+
+        return response()->json($user);
     }
 
     /**

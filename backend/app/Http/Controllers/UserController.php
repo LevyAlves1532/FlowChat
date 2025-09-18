@@ -110,6 +110,8 @@ class UserController extends Controller
             'profile_pic' => $path,
         ]);
 
+        $user['profile_pic'] = asset('storage/' . $path);
+
         return $user;
     }
 
