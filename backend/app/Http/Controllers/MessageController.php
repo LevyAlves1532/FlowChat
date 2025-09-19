@@ -54,6 +54,9 @@ class MessageController extends Controller
             'image' => $pathImage,
         ]);
 
+        $message['is_you'] = $message->sender_id === Auth::id();
+        $message['image'] = $message->image ? asset('storage/' . $message->image) : null;
+
         return response()->json($message, 201);
     }
 
