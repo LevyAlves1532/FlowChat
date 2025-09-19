@@ -27,6 +27,7 @@ class MessageController extends Controller
             ->get()
             ->map(function (Message $message) {
                 $message['is_you'] = $message->sender_id === Auth::id();
+                $message['image'] = $message->image ? asset('storage/' . $message->image) : null;
                 return $message;
             });
     }

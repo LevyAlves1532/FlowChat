@@ -19,6 +19,7 @@ export const useChatStore = create((set, get) => ({
     },
 
     setActiveTab: (tab) => set({ activeTab: tab }),
+
     setSelectedUser: (selectedUser) => set({ selectedUser }),
 
     getAllContacts: async () => {
@@ -34,6 +35,7 @@ export const useChatStore = create((set, get) => ({
             set({ isUsersLoading: false });
         }
     },
+
     getMyChatPartners: async () => {
         set({ isUsersLoading: true });
 
@@ -45,6 +47,20 @@ export const useChatStore = create((set, get) => ({
             console.log('Chats error:', error);
         } finally {
             set({ isUsersLoading: false });
+        }
+    },
+
+    getMessages: async (userId) => {
+        set({ isMessagesLoading: true });
+        
+        try {
+            const res = await axiosInstance.get(`/message/${userId}/chat`);
+            set({ messages: res.data });
+        } catch (error) {
+            toast.toast(error?.response?.data?.message || 'Erro ao buscar mensagens');
+            console.log('Messages error:', error);
+        } finally {
+            set({ isMessagesLoading: false });
         }
     },
 }));
